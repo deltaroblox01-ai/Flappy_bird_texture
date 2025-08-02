@@ -25,18 +25,18 @@
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
-    // Load textures
+    // Load textures (gunakan link GitHub agar tidak 404)
     const birdImg = new Image();
     const bgImg = new Image();
     const pipeNorthImg = new Image();
     const pipeSouthImg = new Image();
     const groundImg = new Image();
 
-    birdImg.src = "https://i.ibb.co/Q6j5vZb/bird.png";
-    bgImg.src = "https://i.ibb.co/XxqQjCp/bg.png";
-    pipeNorthImg.src = "https://i.ibb.co/YZX3b4B/pipeNorth.png";
-    pipeSouthImg.src = "https://i.ibb.co/NtDKsD3/pipeSouth.png";
-    groundImg.src = "https://i.ibb.co/F0j3Cvn/ground.png";
+    birdImg.src = "https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/yellowbird-midflap.png";
+    bgImg.src = "https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/background-day.png";
+    pipeNorthImg.src = "https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/pipe-green.png";
+    pipeSouthImg.src = "https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/pipe-green.png";
+    groundImg.src = "https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/base.png";
 
     let frames = 0;
     let gravity = 0.25;
@@ -70,7 +70,14 @@
     function drawPipes() {
       for (let i = 0; i < pipes.length; i++) {
         const p = pipes[i];
-        ctx.drawImage(pipeNorthImg, p.x, p.top - pipeNorthImg.height);
+        // Top pipe (flipped)
+        ctx.save();
+        ctx.translate(p.x + pipeWidth / 2, p.top);
+        ctx.scale(1, -1);
+        ctx.drawImage(pipeNorthImg, -pipeWidth/2, 0);
+        ctx.restore();
+
+        // Bottom pipe
         ctx.drawImage(pipeSouthImg, p.x, p.top + gap);
       }
     }
@@ -144,4 +151,40 @@
     loop();
   </script>
 </body>
+</html>    }
+
+    function loop() {
+      ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+
+      bird.draw();
+      bird.update();
+
+      drawPipes();
+      updatePipes();
+
+      ctx.drawImage(groundImg, 0, canvas.height - 80, canvas.width, 80);
+      drawScore();
+
+      frames++;
+      if (!gameOver) {
+        requestAnimationFrame(loop);
+      } else {
+        ctx.fillStyle = "red";
+        ctx.font = "50px Arial";
+        ctx.fillText("Game Over", 80, 300);
+      }
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.code === "Space") bird.flap();
+    });
+
+    document.addEventListener("touchstart", function () {
+      bird.flap();
+    });
+
+    loop();
+  </script>
+</body>
+
 </html>
